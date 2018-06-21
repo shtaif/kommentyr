@@ -65,7 +65,7 @@ class App extends Component {
             };
         })();
 
-        this.paging = {next: 0, pageSize: 8};
+        this.paging = {next: 0, pageSize: 10};
 
         apiClient.setApiBaseUrl(this.state.serverUrl);
 
