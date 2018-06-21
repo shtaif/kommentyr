@@ -14,13 +14,12 @@ const
 	koaCompress = require('koa-compress'),
     koaBodyparser = require('koa-bodyparser'),
     koaCors = require('koa2-cors'),
+	koaSend = require('koa-send'),
 	mongoose = require('mongoose'),
 	{ magenta } = require('cli-color'),
 	CommentModel = require('./models/comment-model'),
 	commentsApiMiddleware = require('./api/comments-api-router'),
     config = require('./config');
-	// myKoaH2Push = require('./lib/my-koa-h2-push'),
-	// OnCleanup = require('./lib/on-cleanup'),
 
 
 
@@ -38,11 +37,6 @@ const
 			fs.readFileAsync('./tls.key'),
 			fs.readFileAsync('./tls.cert')
 		]);
-
-		// CommentModel.remove({}, function() {
-		// 	console.log(arguments);
-		// 	console.log('REMOVED ALL');
-		// });
 
 		let server = Promise.promisifyAll(
             http2.createSecureServer(
@@ -65,17 +59,10 @@ const
                         origin: '*'
                     }),
     				koaStatic('./frontend/build', {defer: true}),
-					// async (ctx, next) => {
-					// 	console.log('RUNNING ERROR MIDDLEWARE!');
-					// 	try {
-					// 		await next();
-					//     }
-					// 	catch (err) {
-					// 		err.status = err.myStatusCode || 500;
-					// 		throw err;
-					//     }
-					// },
 					new KoaRouter() // A base for all "API endpoint branches" to sit in as more will add up through time...
+						.get('/', async ctx => {
+							await koaSend(ctx, './frontend/build/index.html');
+						})
 						.use('/api/comments', commentsApiMiddleware)
 						.routes()
     			]))

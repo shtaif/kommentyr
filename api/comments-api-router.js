@@ -36,12 +36,6 @@ module.exports = new KoaRouter()
         )
 
         ctx.body = { data: comments };
-        // ctx.body = { data: [] };
-
-        // let error = new Error('Oh damn!');
-        // // error.myStatusCode = 'Oh damn, something broke!';
-        // error.myStatusCode = 400;
-        // throw error;
     })
 
     .post('/', async ctx => {

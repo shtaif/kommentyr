@@ -1,3 +1,6 @@
+$main-break-point: 500px;
+
+
 body {
     position: absolute;
     width: 100%;
@@ -8,8 +11,13 @@ body {
 
 
 .app-component {
-    max-width: 500px;
+    max-width: $main-break-point;
     margin: auto;
+
+    @media (min-width: $main-break-point) {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
 
     ::placeholder {
         color: #b5b5b5;
@@ -67,7 +75,7 @@ body {
 
         &:not(.shown) {
             opacity: 0;
-            transform: scale(0.35);
+            transform: scale(0.25);
         }
 
         &:not(.loading-first-page) {
@@ -214,11 +222,11 @@ body {
             transform: translateX(50%);
             text-align: center;
             transition: all 0.4s 0.7s;
-            .last-seen-label {
+            .last-active-label {
                 font-size: 0.81em;
                 font-style: italic;
             }
-            .last-seen-value {
+            .last-active-value {
                 font-size: 0.91em;
             }
             .show & {

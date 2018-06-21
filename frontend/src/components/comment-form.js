@@ -26,7 +26,7 @@ class CommentForm extends Component {
         try {
             await this.state.onSubmit(this.state.email, this.state.text);
         }
-        catch (err) {/* Swallow error... */}
+        catch (err) {/* Suppress any errors... */}
 
         this.setState({
             isBusy: false,
@@ -54,9 +54,6 @@ class CommentForm extends Component {
                                this.setState({email: e.target.value});
                                this.state.onEmailChange(e.target.value);
                            }} />
-
-                    {/*a*/}
-                    {/*<div>Email is invalid</div>*/}
 
                     <TextareaAutosize className="text-field"
                                       required

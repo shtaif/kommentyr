@@ -11,7 +11,6 @@ import TextareaAutosize from 'react-textarea-autosize';
 import CommentForm from './components/comment-form';
 import Comment from './components/comment';
 import MdLoader from './components/md-loader';
-import UserDetailsModal from './components/user-details-modal';
 import apiClient from './tools/api-client';
 import preload from './tools/preload-images';
 import getImageColorforPreview from './tools/get-image-color-for-preview';
@@ -19,9 +18,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
 
 
+
 let gravatarUrl = (emailHash, size='') => {
     return `https://www.gravatar.com/avatar/${emailHash}.jpg?s=${size}`;
 };
+
 
 
 class App extends Component {
@@ -30,7 +31,6 @@ class App extends Component {
 
         this.state = {
             comments: [],
-            serverUrl: 'https://localhost:4443/api',
             searchTerm: '',
             lastSearchTermUsed: '',
             commentListRef: null,
@@ -43,12 +43,8 @@ class App extends Component {
             isInited: false,
             hasMoreCommentsToLoad: true,
             loaderTopPos: null,
-
-            // modalHandle: null,
-            // modalLeftText: '',
-            // modalPreviewColor: null,
-
             userDetailsModal: {
+                isOpen: false,
                 email: null,
                 emailHash: null,
                 previewBgColor: 'rgb(0,0,0)',
@@ -67,7 +63,7 @@ class App extends Component {
 
         this.paging = {next: 0, pageSize: 10};
 
-        apiClient.setApiBaseUrl(this.state.serverUrl);
+        apiClient.setApiBaseUrl(window.location.origin+'/api');
 
         JsTimeAgo.locale(en);
     }
@@ -75,26 +71,12 @@ class App extends Component {
 
     async componentDidMount() {
         await this.loadComments({reset: true});
-
-        // let comment = this.state.comments[0];
-        // this.setState({
-        //     modalPreviewColor: 'purple'
-        // });
-        // this.setState({
-        //     modalLeftText: 'abc'
-        // });
-        // console.log('this.state.modalPreviewColor', this.state.modalPreviewColor);
-        // setTimeout(() => {
-        //     this.state.modalHandle.open(/*comment.email*//*, 'purple'*/);
-        // }, 0);
-        // setTimeout(() => {
-        //     this.setState({
-        //         modalLeftText: '@@@'
-        //     });
-        // }, 1000);
     }
 
 
+    /*
+    * Opens the User Details Dialog and kick-off additional async preparations for it.
+     */
     async openUserDetails(email, emailHash) {
         let preloadPromise = preload(gravatarUrl(emailHash, this.state.userImageHighResSize));
 
@@ -103,6 +85,7 @@ class App extends Component {
         this.setState({
             userDetailsModal: {
                 ...this.state.userDetailsModal,
+                isOpen: true,
                 email: email,
                 emailHash: emailHash,
                 previewBgColor: previewColor
@@ -134,19 +117,23 @@ class App extends Component {
     }
 
 
+    /*
+    * Closes the User Details Dialog.
+     */
     closeUserDetails() {
         this.setState({
             userDetailsModal: {
                 ...this.state.userDetailsModal,
-                email: null,
-                emailHash: null,
-                highResReady: false,
-                lastComment: null
+                isOpen: false
             }
         });
     }
 
 
+    /*
+    * Loads comments; has to modes based on the `opts.reset` option:
+    * either reset comment to the first "page" of comments, or just load the next page and add it to the current comments
+     */
     async loadComments(opts={reset: false}) {
         if (opts.reset) {
             this.paging.next = 0;
@@ -169,8 +156,6 @@ class App extends Component {
                 sortDirection: 'desc'
             });
 
-            await new Promise(resolve => setTimeout(resolve, 500));
-
             this.paging.next += this.paging.pageSize;
 
             this.setState({
@@ -181,37 +166,21 @@ class App extends Component {
         }
         catch (err) {
             // TODO: Pop a modal with text such as "Couldn't load messages..."
-            // alert(err.errorMessage);
-            console.error('ERR', err);
+            console.error(err);
         }
 
         this.setState({ isLoadingComments: false });
     }
 
 
-    // validate() {
-    //     if (!this.state.newCommentEmail) {
-    //         throw new Error('`Email` is mandatory');
-    //     }
-    //
-    //     let emailRegEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    //     if (!emailRegEx.test(this.state.newCommentEmail)) {
-    //         throw new Error('`Email` does not seem to be a valid email address');
-    //     }
-    //
-    //     if (!this.state.newCommentText) {
-    //         throw new Error('`Message` is mandatory');
-    //     }
-    // }
-
-
+    /*
+    * Posts a new comment from the comment-form's fields.
+    * Validation is done using HTML5 attribute directives
+     */
     async saveComment() {
         try {
-            // this.validate();
-
-            // await new Promise(resolve => setTimeout(resolve, 1000));
-
             let newComment;
+
             try {
                 newComment = await apiClient.create('comments', {
                     email: this.state.newCommentEmail,
@@ -220,7 +189,6 @@ class App extends Component {
             }
             catch (err) {
                 // TODO: Pop a modal with text such as "Unfortunately, couldn't save the new message..."
-                // alert(err.errorMessage);
                 throw err;
             }
 
@@ -231,17 +199,15 @@ class App extends Component {
             });
         }
         catch (err) {
-            console.error('ERR', err);
+            console.error(err);
         }
     }
 
 
     render() {
         return (
-            <div className={classNames(
-                     'app-component',
-                     {'loading': this.state.isLoadingComments}
-                 )}>
+            <div className="app-component">
+
                 <CommentForm className="comment-form padding-sides"
                              onEmailChange={email => this.setState({ newCommentEmail: email })}
                              onTextChange={text => this.setState({ newCommentText: text })}
@@ -329,62 +295,55 @@ class App extends Component {
 
                 </div>
 
-                {/*{this.state.modalLeftText && (
-                    <UserDetailsModal className=""
-                                      handle={handle => this.state.modalHandle = handle}
-                                      leftText={this.state.modalLeftText}
-                                      previewBgColor={this.state.modalPreviewColor} />
-                )}*/}
 
-                {this.state.userDetailsModal.email && (
-                    <Modal className="user-details-modal"
-                           isOpen={!!this.state.userDetailsModal.email}
-                           centered={true}>
-                        <ModalBody>
-                            <div className="wrapper">
-                                <button className="close-butt"
-                                        onClick={() => this.closeUserDetails()}>
-                                    <span className="x">×</span>
-                                </button>
 
-                                <div className="preview-bg abs"
-                                     style={{backgroundColor: this.state.userDetailsModal.previewBgColor}}>
-                                </div>
+                <Modal className="user-details-modal"
+                       isOpen={!!this.state.userDetailsModal.isOpen}
+                       centered={true}>
+                    <ModalBody>
+                        <div className="wrapper">
+                            <button className="close-butt"
+                                    onClick={() => this.closeUserDetails()}>
+                                <span className="x">×</span>
+                            </button>
 
-                                <div className={classNames(
-                                        'user-image abs',
-                                        {ready: this.state.userDetailsModal.highResReady}
-                                     )}
-                                     style={{backgroundImage: `url(`+gravatarUrl(this.state.userDetailsModal.emailHash, this.state.userImageHighResSize)+`)`}}>
-                                </div>
+                            <div className="preview-bg abs"
+                                 style={{backgroundColor: this.state.userDetailsModal.previewBgColor}}>
+                            </div>
 
-                                <div className="dark-area abs"></div>
+                            <div className={classNames(
+                                    'user-image abs',
+                                    {ready: this.state.userDetailsModal.highResReady}
+                                 )}
+                                 style={{backgroundImage: `url(`+gravatarUrl(this.state.userDetailsModal.emailHash, this.state.userImageHighResSize)+`)`}}>
+                            </div>
 
-                                <div className="text lt abs"
-                                     onClick={() => {
-                                         this.closeUserDetails();
-                                         this.setState(
-                                             {searchTerm: this.state.userDetailsModal.email},
-                                             () => this.loadComments({reset: true})
-                                         );
-                                     }}>
-                                    {this.state.userDetailsModal.email}
-                                </div>
+                            <div className="dark-area abs"></div>
 
-                                <div className="text rt abs">
-                                    <div className="last-seen-label">Last active:</div>
-                                    <div className="last-seen-value">
-                                        {this.state.userDetailsModal.lastComment &&
-                                            <ReactTimeAgo>
-                                                {new Date(this.state.userDetailsModal.lastComment.createdAt)}
-                                            </ReactTimeAgo>
-                                        }
-                                    </div>
+                            <div className="text lt abs"
+                                 onClick={() => {
+                                     this.closeUserDetails();
+                                     this.setState(
+                                         {searchTerm: this.state.userDetailsModal.email},
+                                         () => this.loadComments({reset: true})
+                                     );
+                                 }}>
+                                {this.state.userDetailsModal.email}
+                            </div>
+
+                            <div className="text rt abs">
+                                <div className="last-active-label">Last active:</div>
+                                <div className="last-active-value">
+                                    {this.state.userDetailsModal.lastComment &&
+                                        <ReactTimeAgo>
+                                            {new Date(this.state.userDetailsModal.lastComment.createdAt)}
+                                        </ReactTimeAgo>
+                                    }
                                 </div>
                             </div>
-                        </ModalBody>
-                    </Modal>
-                )}
+                        </div>
+                    </ModalBody>
+                </Modal>
 
             </div>
         );
