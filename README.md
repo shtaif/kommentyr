@@ -5,7 +5,7 @@ A sophisticated comment-posting app backed by a remote database using user image
 Front end is based on React.
 Backend is Node.js powered by Koa framework, with MongoDB with the Mongoose ORM/driver.
 
-# Installation
+### Installation
 Clone repository:
 ```bash
 git clone https://github.com/shtaif/kommentyr.git
@@ -25,7 +25,7 @@ export KMTR_DB_URI=mongodb://localhost:27017/kommentyr
 export KMTR_PORT=4000
 ```
 
-# Running
+### Running
 Start server via the `start` script:
 ```bash
 npm start
@@ -37,11 +37,12 @@ will serve the app.
 
 
 
-# Notable features
+### Notable features
 - Live search (searches comments from the DB, ensuring reliable results)
 - Pagination through Infinite scrolling (Add a lot of comments and see it in action!)
-- Modal with High-res image shown when clicking on a commenter's image.
-- In the user modal, clicking on the email address automatically filters for that user's own comments.
+- Auto-resizing message field
+- Modal with High-res image shown when clicking on a commenter's image
+- In the user modal, clicking on the email address automatically filters for that user's own comments
 - More...
 
 ### Important notes (please read before running)
