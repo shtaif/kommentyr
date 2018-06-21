@@ -1,0 +1,230 @@
+body {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #f9f9f9;
+    overflow-y: scroll;
+}
+
+
+.app-component {
+    max-width: 500px;
+    margin: auto;
+
+    ::placeholder {
+        color: #b5b5b5;
+    }
+
+    .padding-sides {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .comment-form {
+        background-color: #efefef;
+    }
+
+    .comments-wrapper {
+        position: relative;
+        background-color: #fff;
+        padding-top: 28px;
+        padding-bottom: 28px;
+    }
+
+    .comment-search-wrapper {
+        position: relative;
+        margin-bottom: 28px;
+
+        .comment-search-icon {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: calc(50% - 10px);
+            left: 10px;
+            z-index: 4;
+            background-color: #aeaeae;
+            mask: url(/img/magnifying-glass.svg) center center no-repeat / 14px 14px;
+            pointer-events: none;
+        }
+
+        .comment-search-field {
+            padding-left: 36px;
+            height: 36px;
+            font-size: 0.88em;
+            border-radius: unset;
+        }
+    }
+
+    .loader {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        left: calc(50% - 75px);
+        top: 30px; // Default position when reseting comment list
+        pointer-events: none;
+        transition: opacity 0.25s, transform 0.25s;
+        z-index: 1;
+
+        &:not(.shown) {
+            opacity: 0;
+            transform: scale(0.35);
+        }
+
+        &:not(.loading-first-page) {
+            width: 60px;
+            height: 60px;
+            left: calc(50% - 30px);
+        }
+    }
+
+    .comment-list {
+        position: relative;
+        min-height: 180px;
+        margin-bottom: 42px;
+
+        .no-comments {
+            color: #b5b5b5;
+            text-align: center;
+            div:nth-child(1) {
+                font-size: 1.2em;
+                margin-bottom: 8px;
+            }
+            div:nth-child(2) {
+                font-size: 0.86em;
+                margin-bottom: 12px;
+            }
+            img {
+                width: 86px;
+                margin-left: -16px;
+            }
+            .kommentyr {
+                color: #007bff;
+                font-weight: bold;
+                font-style: italic;
+            }
+            .unmatched-term {
+                color: #007bff;
+            }
+        }
+
+        .comment-item {
+            transform-origin: left;
+            &:not(last-child) {
+                margin-bottom: 22px;
+            }
+            .image {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+
+.user-details-modal {
+    .abs {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    .wrapper {
+        position: relative;
+        display: flex;
+        height: 300px;
+        overflow: hidden;
+    }
+    .close-butt {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        right: 0;
+        top: 0;
+        padding: 0;
+        font-size: 38px;
+        color: #fff;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+        background-color: transparent;
+        border: none;
+        z-index: 1;
+        cursor: pointer;
+        outline: none;
+        .x {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: -7px;
+            text-align: center;
+        }
+    }
+
+    .preview-bg {
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        transition: all 0.25s;
+    }
+
+    .user-image {
+        width: 100%;
+        height: 100%;
+        background: no-repeat center center / cover;
+        transition: all 0.25s;
+        &:not(.ready) {
+            opacity: 0;
+            transform: scale(2);
+        }
+    }
+    .dark-area {
+        width: 100%;
+        height: 30%;
+        top: unset;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
+        transition: all 0.4s 0.3s;
+        opacity: 0;
+        .show & {
+            opacity: 1;
+        }
+    }
+    .text {
+        top: unset;
+        color: #fff;
+        font-size: 1em;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+        &.lt {
+            left: 16px;
+            bottom: 30px;
+            opacity: 0;
+            transform: translateX(-50%);
+            font-size: 0.9em;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.4s 0.5s;
+            cursor: pointer;
+            .show & {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        &.rt {
+            left: unset;
+            right: 16px;
+            bottom: 30px;
+            opacity: 0;
+            transform: translateX(50%);
+            text-align: center;
+            transition: all 0.4s 0.7s;
+            .last-seen-label {
+                font-size: 0.81em;
+                font-style: italic;
+            }
+            .last-seen-value {
+                font-size: 0.91em;
+            }
+            .show & {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    }
+}

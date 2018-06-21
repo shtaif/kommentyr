@@ -1,0 +1,36 @@
+.comment-form-component {
+    padding-top: 28px;
+    padding-bottom: 28px;
+
+    .email-field {
+        margin-bottom: 12px;
+        font-size: 0.88em;
+        transition: background-color 0.35s;
+    }
+
+    .text-field {
+        width: 100%;
+        min-height: 66px;
+        margin-bottom: 12px;
+        padding: .375rem .75rem;
+        padding-bottom: 26px;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        resize: none;
+        font-size: 0.88em;
+        transition: background-color 0.35s, height 0.25s;
+        overflow: hidden;
+        &:disabled {
+            background-color: #e9ecef;
+        }
+    }
+
+    .submit-button {
+        width: 100%;
+        font-size: 0.70em;
+        font-weight: bold;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        transition: background-color 0.35s;
+    }
+}
