@@ -1,5 +1,3 @@
-![Kommentyr Dog](https://lh5.googleusercontent.com/z9YmXC4vYFaFmsRQjySrn5XQ0YakpTtsymF-XyPEcH5hdWK2xG1-Ba42-70Z0MT1yUhlevgkSoSBsQ=w1920-h957 "Kommentyr Dog")
-
 # Kommentyr
 A sophisticated comment-posting app backed by a remote database using user images from Gravatar.
 
