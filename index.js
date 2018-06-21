@@ -13,7 +13,6 @@ const
 	koaLogger = require('koa-logger'),
 	koaCompress = require('koa-compress'),
     koaBodyparser = require('koa-bodyparser'),
-    koaCors = require('koa2-cors'),
 	koaSend = require('koa-send'),
 	mongoose = require('mongoose'),
 	{ magenta } = require('cli-color'),
@@ -25,6 +24,7 @@ const
 
 (async () => {
 	try {
+		// Verifiy database connection string was defined as the `KMTR_DB_URI` env var
 		if (!process.env.KMTR_DB_URI) {
 			throw new Error(
 				'No MongoDB URI was configured!' + "\n" +
@@ -32,12 +32,14 @@ const
 			);
 		}
 
+		// Establish DB connection + read TLS assets to memory needed for the HTTP2 server
 		let [ , tlsKey, tlsCert ] = await Promise.all([
 			mongoose.connect(process.env.KMTR_DB_URI, {poolSize: config.mongodbPoolSize}),
 			fs.readFileAsync('./tls.key'),
 			fs.readFileAsync('./tls.cert')
 		]);
 
+		// Create a Node.js HTTP2 server and pass it a fully-middlewared Koa app
 		let server = Promise.promisifyAll(
             http2.createSecureServer(
     			{
@@ -52,12 +54,6 @@ const
 					koaLogger(),
     				koaCompress(),
                     koaBodyparser({enableTypes: ['json']}),
-                    koaCors({
-                        allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH'],
-                        allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'x-auth'],
-                        credentials: true,
-                        origin: '*'
-                    }),
     				koaStatic('./frontend/build', {defer: true}),
 					new KoaRouter() // A base for all "API endpoint branches" to sit in as more will add up through time...
 						.get('/', async ctx => {
@@ -75,6 +71,7 @@ const
 		console.info(magenta(`Secure HTTP2 server running on ${server.address().port}`));
 	}
 	catch (err) {
-		console.error(err.stack);
+		console.error('App failed to start...'+"\n", err);
+		process.exit(1);
 	}
 })();

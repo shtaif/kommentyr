@@ -7,6 +7,14 @@ const
 
 module.exports = new KoaRouter()
 
+    /*
+    * Route to fetch comments.
+    * Supported querystring parameters:
+    * - `id` to filter for a specific id
+    * - `emailContains` to filter based on email
+    * - `skip` / `limit` combo for pagination
+    * - `sortField` / `sortDirection` combo for sorting
+     */
     .get('/', async ctx => {
         let {
             id,
@@ -38,6 +46,12 @@ module.exports = new KoaRouter()
         ctx.body = { data: comments };
     })
 
+    /*
+    * Route to post a new comment.
+    * Accepts a json payload with 2 properties:
+    * - `email` - author's email
+    * - `text` - comment text content
+     */
     .post('/', async ctx => {
         try {
             let { email, text } = ctx.request.body;
@@ -79,4 +93,5 @@ module.exports = new KoaRouter()
             ctx.body = { errorMessage: err.message };
         }
     })
+
     .routes();
