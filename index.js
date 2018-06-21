@@ -3,7 +3,7 @@ process.title = 'Kommentyr';
 
 const
 	Promise = require('bluebird'),
-    fs = Promise.promisifyAll(require('fs')),
+	fs = Promise.promisifyAll(require('fs')),
 	http2 = require('http2'),
 	crypto = require('crypto'),
 	Koa = require('koa'),
@@ -12,13 +12,13 @@ const
 	koaStatic = require('koa-static'),
 	koaLogger = require('koa-logger'),
 	koaCompress = require('koa-compress'),
-    koaBodyparser = require('koa-bodyparser'),
+	koaBodyparser = require('koa-bodyparser'),
 	koaSend = require('koa-send'),
 	mongoose = require('mongoose'),
 	{ magenta } = require('cli-color'),
 	CommentModel = require('./models/comment-model'),
 	commentsApiMiddleware = require('./api/comments-api-router'),
-    config = require('./config');
+	config = require('./config');
 
 
 
@@ -41,30 +41,30 @@ const
 
 		// Create a Node.js HTTP2 server and pass it a fully-middlewared Koa app
 		let server = Promise.promisifyAll(
-            http2.createSecureServer(
-    			{
-                    key: tlsKey,
-                    cert: tlsCert,
-                    requestCert: false,
-                    rejectUnauthorized: false,
-                    allowHTTP1: true,
-                    settings: {enablePush: true}
-    			},
+			http2.createSecureServer(
+				{
+					key: tlsKey,
+					cert: tlsCert,
+					requestCert: false,
+					rejectUnauthorized: false,
+					allowHTTP1: true,
+					settings: {enablePush: true}
+				},
 				new Koa().use(koaCompose([
 					koaLogger(),
-    				koaCompress(),
-                    koaBodyparser({enableTypes: ['json']}),
-    				koaStatic('./frontend/build', {defer: true}),
+					koaCompress(),
+					koaBodyparser({enableTypes: ['json']}),
+					koaStatic('./frontend/build', {defer: true}),
 					new KoaRouter() // A base for all "API endpoint branches" to sit in as more will add up through time...
 						.get('/', async ctx => {
 							await koaSend(ctx, './frontend/build/index.html');
 						})
 						.use('/api/comments', commentsApiMiddleware)
 						.routes()
-    			]))
-                .callback()
-    		)
-        );
+				]))
+				.callback()
+			)
+		);
 
 		await server.listenAsync(process.env.KMTR_PORT || config.defaultPort);
 
