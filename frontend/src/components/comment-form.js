@@ -5,9 +5,9 @@ import noop from '../tools/noop';
 import './comment-form.css';
 
 
-class CommentForm extends Component {
+export default class CommentForm extends Component {
     constructor(props) {
-        super();
+        super(props);
 
         this.state = {
             email: props.email || '',
@@ -21,27 +21,39 @@ class CommentForm extends Component {
 
 
     async handleOnSubmit() {
-        this.setState({isBusy: true});
+        this.setState(state => ({isBusy: true}));
+
+        let failure = null;
 
         try {
             await this.state.onSubmit(this.state.email, this.state.text);
-        }
-        catch (err) {/* Suppress any errors... */}
 
-        this.setState({
-            isBusy: false,
-            email: '',
-            text: ''
-        });
+            this.setState(state => ({
+                email: '',
+                text: ''
+            }));
+
+            this.state.onEmailChange('');
+            this.state.onTextChange('');
+        }
+        catch (err) {
+            failure = err;
+        }
+
+        this.setState(state => ({isBusy: false}));
+
+        if (failure) {
+            throw failure;
+        }
     }
 
 
     render() {
         return (
             <form className={'comment-form-component '+(this.props.className || '')}
-                  onSubmit={e => {
+                  onSubmit={async e => {
                       e.preventDefault();
-                      this.handleOnSubmit();
+                      await this.handleOnSubmit();
                   }}>
                 <fieldset disabled={this.state.isBusy}>
 
@@ -71,7 +83,4 @@ class CommentForm extends Component {
             </form>
         );
     }
-}
-
-
-export default CommentForm;
+};

@@ -13,7 +13,8 @@ const apiClientSingleton = {
     async fetch(serviceName, queryParams={}) {
         try {
             let response = await axios.get(this.apiBaseUrl+'/'+serviceName, {
-                params: queryParams
+                params: queryParams,
+                withCredentials: true
             });
             return response.data.data;
         }
@@ -35,8 +36,61 @@ const apiClientSingleton = {
             let response = await axios.post(
                 this.apiBaseUrl+'/'+serviceName,
                 payloadObject,
-                { headers: {'content-type': 'application/json'} }
+                {
+                    headers: {'content-type': 'application/json'},
+                    withCredentials: true
+                }
             );
+            return response.data.data;
+        }
+        catch (err) {
+            throw err;
+        }
+    },
+
+
+    async signup(email, password) {
+        try {
+            let response = await axios.post(
+                this.apiBaseUrl+'/auth/signup',
+                { email: email, password: password },
+                {
+                    headers: {'content-type': 'application/json'},
+                    withCredentials: true
+                }
+            );
+            return response.data.data;
+        }
+        catch (err) {
+            throw err;
+        }
+    },
+
+
+    async signin(email, password) {
+        try {
+            let response = await axios.put(
+                this.apiBaseUrl+'/auth/signin',
+                { email: email, password: password },
+                {
+                    headers: {'content-type': 'application/json'},
+                    withCredentials: true
+                }
+            );
+            return response.data.data;
+        }
+        catch (err) {
+            throw err;
+        }
+    },
+
+
+    async signout() {
+        try {
+            let response = await axios.put(this.apiBaseUrl+'/auth/signout', {}, {
+                headers: {'content-type': 'application/json'},
+                withCredentials: true
+            });
             return response.data.data;
         }
         catch (err) {

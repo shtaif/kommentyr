@@ -3,19 +3,25 @@
     "version": "1.0.0",
     "description": "Kommentyr - a comment-oholic's best friend",
     "dependencies": {
+        "apollo-boost": "^0.1.10",
         "axios": "^0.18.0",
         "bootstrap": "^4.1.1",
         "classnames": "^2.2.6",
+        "graphql": "^0.13.2",
+        "graphql-tag": "^2.9.2",
+        "lockr": "^0.8.4",
         "lodash.debounce": "^4.0.8",
         "node-vibrant": "^3.0.0",
         "react": "^16.4.1",
         "react-dom": "^16.4.1",
         "react-flip-move": "^3.0.2",
         "react-infinite-scroller": "^1.1.4",
+        "react-redux": "^5.0.7",
         "react-scripts": "1.1.4",
         "react-textarea-autosize": "^6.1.0",
         "react-time-ago": "^2.0.3",
-        "reactstrap": "^6.1.0"
+        "reactstrap": "^6.1.0",
+        "redux": "^4.0.0"
     },
     "devDependencies": {
         "node-sass-chokidar": "^1.3.0",

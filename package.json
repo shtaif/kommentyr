@@ -9,17 +9,27 @@
     "author": "Dor Shtaif <1dorshtief@gmail.com>",
     "license": "ISC",
     "dependencies": {
+        "@koa/cors": "^2.2.2",
+        "bcrypt": "^3.0.0",
         "bluebird": "^3.5.1",
         "cli-color": "^1.2.0",
+        "escape-string-regexp": "^1.0.5",
+        "graphql": "^0.13.2",
+        "graphql-subscriptions": "^0.5.8",
+        "graphql-tools": "^3.0.5",
         "koa": "^2.5.1",
         "koa-bodyparser": "^4.2.1",
         "koa-compose": "^4.1.0",
         "koa-compress": "^3.0.0",
+        "koa-graphql": "^0.7.5",
         "koa-logger": "^3.2.0",
         "koa-router": "^7.4.0",
         "koa-send": "^5.0.0",
+        "koa-session": "^5.8.2",
+        "koa-session-mongoose": "^2.0.5",
         "koa-static": "^4.0.3",
-        "koa2-cors": "^2.0.5",
-        "mongoose": "^5.1.5"
+        "lodash": "^4.17.10",
+        "mongoose": "^5.1.5",
+        "promise-deferred": "^2.0.1"
     }
 }

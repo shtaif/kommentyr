@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
 
 module.exports = mongoose.model(
-    'Comment',
+    'User',
     new mongoose.Schema(
         {
+            name: {
+                type: String,
+                index: true
+            },
             email: {
                 type: String,
                 index: true
@@ -11,14 +15,7 @@ module.exports = mongoose.model(
             emailHash: {
                 type: String
             },
-            text: {
-                type: String
-            },
-            replyingToId: {
-                type: String,
-                index: true
-            },
-            posterId: {
+            password: {
                 type: String,
                 index: true
             }
@@ -26,7 +23,7 @@ module.exports = mongoose.model(
         {
             timestamps: {
                 createdAt: true,
-                updatedAt: false
+                updatedAt: true
             }
         }
     )

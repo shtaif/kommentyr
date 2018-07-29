@@ -1,6 +1,8 @@
 const
     crypto = require('crypto'),
     KoaRouter = require('koa-router'),
+    escapeStringRegexp = require('escape-string-regexp'),
+    _uniq = require('lodash/uniq'),
     CommentModel = require('../models/comment-model'),
     ApiError = require('./api-error');
 
@@ -19,6 +21,7 @@ module.exports = new KoaRouter()
         let {
             id,
             emailContains,
+            replyingToId,
             skip,
             limit,
             sortField,
@@ -27,13 +30,16 @@ module.exports = new KoaRouter()
 
         let conditions = {};
         if (id) {
-            conditions.id = id;
+            conditions._id = id;
         }
         if (emailContains) {
-            conditions.email = new RegExp(emailContains, 'i');
+            conditions.email = new RegExp(escapeStringRegexp(emailContains), 'i');
+        }
+        if (replyingToId) {
+            conditions.replyingToId = replyingToId;
         }
 
-        let comments = await CommentModel.find(
+        let comments = (await CommentModel.find(
             conditions,
             null,
             {
@@ -41,9 +47,33 @@ module.exports = new KoaRouter()
                 limit: limit && Number.isInteger(+limit)? +limit : null,
                 sort: {[sortField || 'createdAt']: sortDirection || 'desc'}
             }
-        )
+        ))
+        .map(item => item.toObject());
 
-        ctx.body = { data: comments };
+        if (comments.length) {
+            let replies = (await CommentModel.find(
+                {
+                    replyingToId: {
+                        $in: comments.map(item => item._id)
+                    }
+                },
+                'replyingToId',
+                {}
+            ))
+            .map(item => item.toObject());
+
+            for (let comment of comments) {
+                comment.replyCount = 0;
+                for (let reply of replies) {
+                    if (comment._id.toString() === reply.replyingToId) {
+                        comment.replyCount++;
+                    }
+                }
+            }
+        }
+
+        // ctx.body = { data: comments };
+        ctx.body = { data: [] };
     })
 
     /*
@@ -54,7 +84,7 @@ module.exports = new KoaRouter()
      */
     .post('/', async ctx => {
         try {
-            let { email, text } = ctx.request.body;
+            let { email, text, replyingToId } = ctx.request.body;
 
             if (!email) {
                 throw new ApiError('`email` must not be empty', 400);
@@ -77,7 +107,8 @@ module.exports = new KoaRouter()
                     emailHash: (() => {
                         let normalizedEmail = email.trim().toLowerCase();
                         return crypto.createHash('md5').update(normalizedEmail).digest('hex');
-                    })()
+                    })(),
+                    replyingToId: replyingToId
                 })
                 .save();
             }

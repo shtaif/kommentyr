@@ -1,0 +1,30 @@
+// .comment-node {
+//     &:not(last-child) {
+//         margin-bottom: 30px;
+//     }
+//
+//     > .comment-node {
+//         margin-top: 22px;
+//         margin-left: 30px;
+//     }
+//
+//     .show-replies-butt {
+//         margin-top: 8px;
+//         font-size: 0.86em;
+//         color: #007bff;
+//         cursor: pointer;
+//     }
+// }
+
+.comment-container______ {
+    &:not(last-child) {
+        margin-bottom: 30px;
+    }
+
+    .show-replies-butt {
+        margin-top: 8px;
+        font-size: 0.86em;
+        color: #007bff;
+        cursor: pointer;
+    }
+}

@@ -28,13 +28,23 @@ body {
         padding-right: 24px;
     }
 
+    .current-user-section {
+        margin-bottom: 10px;
+        .my-image {
+            width: 40px;
+            height: 40px;
+            background: no-repeat center center / cover;
+            border-radius: 50%;
+        }
+    }
+
     .comment-form {
         background-color: #efefef;
     }
 
     .comments-wrapper {
         position: relative;
-        background-color: #fff;
+        // background-color: #fff;
         padding-top: 28px;
         padding-bottom: 28px;
     }
@@ -63,7 +73,7 @@ body {
         }
     }
 
-    .loader {
+    .top-level-loader {
         position: absolute;
         width: 150px;
         height: 150px;
@@ -72,11 +82,6 @@ body {
         pointer-events: none;
         transition: opacity 0.25s, transform 0.25s;
         z-index: 1;
-
-        &:not(.shown) {
-            opacity: 0;
-            transform: scale(0.25);
-        }
 
         &:not(.loading-first-page) {
             width: 60px;
@@ -101,10 +106,6 @@ body {
                 font-size: 0.86em;
                 margin-bottom: 12px;
             }
-            img {
-                width: 86px;
-                margin-left: -16px;
-            }
             .kommentyr {
                 color: #007bff;
                 font-weight: bold;
@@ -115,14 +116,46 @@ body {
             }
         }
 
-        .comment-item {
-            transform-origin: left;
-            &:not(last-child) {
-                margin-bottom: 22px;
+        .no-comments-image-container {
+            text-align: center;
+            .no-comments-image {
+                width: 86px;
+                margin-left: -16px;
             }
+        }
+
+        .comment-container {
+            transform-origin: left top;
+            margin: 30px 0;
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+
+        .comment-item {
+            transition: opacity 0.2s;
             .image {
                 cursor: pointer;
             }
+            .textuals {
+                background-color: #fff;
+                padding: 12px;
+                border-radius: 14px;
+            }
+            &:hover {
+                opacity: 0.5;
+            }
+        }
+
+        // &:hover {
+        //     .comment-item:not(:hover) {
+        //         opacity: 0.5;
+        //     }
+        // }
+
+        .nested-loader {
+            width: 50px;
+            height: 50px;
         }
     }
 }
