@@ -1,3 +1,16 @@
+@keyframes jumpy-dots {
+    0% {
+        transform: translateY(0);
+    }
+    20% {
+        transform: translateY(-9px);
+    }
+    40% {
+        transform: translateY(0);
+    }
+}
+
+
 $main-break-point: 500px;
 
 
@@ -124,11 +137,50 @@ body {
             }
         }
 
+        .users-currently-composing {
+            .user-image {
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                background: no-repeat center center / cover;
+                display: inline-block;
+                &:nth-child(-n+2) {
+                    margin-right: -8px;
+                }
+            }
+            .dot {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background-color: #c1c1c1;
+                animation: jumpy-dots 1.5s infinite;
+                &:not(:first-child):not(:last-child) {
+                    margin: 0 6px;
+                }
+                &:nth-child(1) {
+                    animation-delay: 0.2s;
+                }
+                &:nth-child(2) {
+                    animation-delay: 0.4s;
+                }
+                &:nth-child(3) {
+                    animation-delay: 0.6s;
+                }
+            }
+            // .textuals, .arrow {
+            //     animation: test-anime 0.5s infinite alternate;
+            // }
+        }
+
         .comment-container {
             transform-origin: left top;
-            margin: 30px 0;
-            &:first-child {
-                margin-top: 0;
+            // margin: 30px 0;
+            // &:first-child {
+            //     margin-top: 0;
+            // }
+            &:not(:first-child):not(:last-child) {
+                padding: 15px 0;
             }
         }
 
@@ -137,14 +189,9 @@ body {
             .image {
                 cursor: pointer;
             }
-            .textuals {
-                background-color: #fff;
-                padding: 12px;
-                border-radius: 14px;
-            }
-            &:hover {
-                opacity: 0.5;
-            }
+            // &:hover {
+            //     opacity: 0.5;
+            // }
         }
 
         // &:hover {

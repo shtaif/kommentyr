@@ -3,7 +3,7 @@ const
     bcrypt = require('bcrypt'),
     KoaRouter = require('koa-router'),
     UserModel = require('../models/user-model'),
-    ApiError = require('./api-error'),
+    { ApiError } = require('./api-errors'),
     config = require('../config');
 
 

@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input } from 'reactstrap';
 import classNames from 'classnames';
-import userSignInAction from '../actions/user-sign-in';
+import auth from '../tools/auth-helper';
 import './auth-modal.css';
 
 
@@ -17,6 +17,25 @@ export default class AuthModal extends Component {
     }
 
 
+    async onSubmit() {
+        try {
+            console.log('ONSUBMIT');
+
+            // if (!this.state.email || !this.state.password) {
+            //
+            // }
+
+            let currUser = await auth.signIn(this.state.email, this.state.password);
+            (this.props.onSignIn || (() => {}))(currUser);
+        }
+        catch (err) {
+            if (this.props.onSignInError)
+                this.props.onSignInError(err);
+            throw err;
+        }
+    }
+
+
     render() {
         return (
             <Modal className="auth-modal"
@@ -24,8 +43,9 @@ export default class AuthModal extends Component {
                    centered={true}>
                 <ModalBody>
                     <form className=""
-                          onSubmit={() => {
-                              this.prop.dispatch(userSignInAction(this.state.email, this.state.password));
+                          onSubmit={e => {
+                              e.preventDefault();
+                              this.onSubmit();
                           }}>
                         <h3>Sign In Modal</h3>
                         <div>
@@ -41,6 +61,11 @@ export default class AuthModal extends Component {
                                    require="true"
                                    value={this.state.password}
                                    onInput={e => this.setState({ password: e.target.value })} />
+                        </div>
+                        <div>
+                            <button type="submit">
+                                SIGN IN
+                            </button>
                         </div>
                     </form>
                 </ModalBody>

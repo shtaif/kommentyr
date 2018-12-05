@@ -1,72 +1,136 @@
 const
+    { GraphQLScalarType } = require('graphql'),
+    gql = require('graphql-tag'),
+    { Kind } = require('graphql/language'),
     { makeExecutableSchema } = require('graphql-tools'),
-    { typeDef: CommentType, resolvers: CommentResolvers } = require('./api/comment'),
-    { typeDef: UserType, resolvers: UserResolvers } = require('./api/user'),
-    { typeDef: AuthTypeDefs, resolvers: AuthResolvers } = require('./api/auth'),
-    { PubSub, withFilter } = require('graphql-subscriptions'),
     _merge = require('lodash/merge'),
-    CommentModel = require('./models/comment-model');
+    pubsub = require('./api/pubsub'),
+    UserModel = require('./models/user-model'),
+    CommentModel = require('./models/comment-model'),
+    { ApiError } = require('./api/api-errors'),
+    { typeDef: CommentType, resolvers: commentResolvers } = require('./api/comment'),
+    { typeDef: UserType, resolvers: userResolvers } = require('./api/user'),
+    { typeDef: FriendshipType, resolvers: friendshipResolvers } = require('./api/friendship'),
+    { typeDef: AuthTypeDefs, resolvers: authResolvers } = require('./api/auth'),
+    { typeDef: UsersComposingTypeDefs, resolvers: usersComposingResolvers } = require('./api/users-composing');
+
 
 
 let graphqlSchema = makeExecutableSchema({
     typeDefs: [
-        `
+        gql`
+            scalar Date
+
             type Query {
-                test: String
+                _: String
+                now: Date
+                throwError: String
+                throwApiError: String
             }
 
             type Mutation {
-                updateComment___(_id: ID!, text: String!): Comment
+                _: String
             }
 
             type Subscription {
-                testSubscription(param: ID!): Comment
+                _: String
+                testSubscription(param: ID!): String
             }
         `,
         CommentType,
         UserType,
-        AuthTypeDefs
+        FriendshipType,
+        AuthTypeDefs,
+        UsersComposingTypeDefs
     ],
+
     resolvers: _merge(
-        CommentResolvers,
-        UserResolvers,
-        AuthResolvers,
-        (() => {
-            return {
-                Query: {
-                    test(root, args, ctx) {
-                        console.log('!!!TEST!!!');
-                        return 'TEST';
+        {
+            Date: new GraphQLScalarType({
+                name: 'Date',
+                description: 'Date custom scalar type',
+                serialize: value => value.toISOString(),
+                parseValue: value => new Date(value),
+                parseLiteral: ast => {
+                    if (ast.kind === Kind.STRING) {
+                        const date = new Date(ast.value);
+                        if (isNaN(date)) {
+                            return undefined;
+                        }
+                        return date;
+                    }
+                    
+                    if (ast.kind === Kind.INT) {
+                        return new Date(+ast.value);
                     }
                 }
-            };
-        })(),
-        (() => {
-            const pubsub = new PubSub();
-            return {
-                Subscription: {
-                    testSubscription: {
-                        // resolve(root, args, ctx, schema) {
-                        //     // console.log('TEST_SUBSCRIPTION_RESOLVE', arguments.length, [ ...arguments ]);
-                        //     console.log('TEST_SUBSCRIPTION_RESOLVE', [ ...arguments ]);
-                        // },
-                        // subscribe() {
-                        //     console.log('TEST_SUBSCRIPTION_SUBSCRIBE', [ ...arguments ]);
-                        // }
-                        subscribe: withFilter(
-                            () => {
-                                console.log('!!!!!!');
-                                return pubsub.asyncIterator('testSubscription');
-                            },
-                            (payload, variables) => {
-                                console.log('@@@@@@');
-                                return payload.testSubscription.repository_name === variables.repoFullName;
-                            }
-                        ),
-                    }
+            }),
+
+            Query: {
+                _(root, args, ctx) {
+                    console.log('!!!TEST_QUERY!!!');
+                    return 'TEST_QUERY';
+                },
+
+                now(root, args, ctx) {
+                    return new Date;
+                },
+
+                throwError(root, args, ctx) {
+					throw new Error('LOL regular error...');
+                },
+
+                throwApiError(root, args, ctx) {
+                    throw new ApiError({
+                        errorCode: 'ERR_LOL_API',
+                        message: 'Laughing Out Loudly Error!',
+                        data: null,
+                        internalData: null
+                    });
+                    // throw new Error('LOL!');
                 }
-            };
-        })(),
+            },
+
+            Mutation: {
+                _(root, args, ctx) {
+                    console.log('!!!TEST_MUTATION!!!');
+                    return 'TEST_MUTATION';
+                }
+            },
+
+            Subscription: {
+                _: {
+                    subscribe: () => {
+                        console.log('!!!TEST_SUBSCRIPTION!!!');
+                        return null;
+                    }
+                },
+
+                testSubscription: {
+                    subscribe: () => {
+                        console.log('SUBSCRIBE');
+                        return pubsub.asyncIterator('testSubscription');
+                    },
+
+                    // subscribe: withFilter(
+                    //     () => {
+                    //         console.log('!!!!!!');
+                    //         return pubsub.asyncIterator('testSubscription');
+                    //     },
+                    //     (payload, variables) => {
+                    //         console.log('@@@@@@');
+                    //         return true;
+                    //         // return payload.testSubscription.repository_name === variables.repoFullName;
+                    //     }
+                    // )
+                }
+            }
+        },
+        commentResolvers,
+        userResolvers,
+        friendshipResolvers,
+        authResolvers,
+        usersComposingResolvers,
     )
 });
 
