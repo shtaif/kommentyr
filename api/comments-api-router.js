@@ -4,7 +4,7 @@ const
     escapeStringRegexp = require('escape-string-regexp'),
     _uniq = require('lodash/uniq'),
     CommentModel = require('../models/comment-model'),
-    ApiError = require('./api-error');
+    { ApiError } = require('./api-errors');
 
 
 module.exports = new KoaRouter()
