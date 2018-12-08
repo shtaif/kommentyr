@@ -1,6 +1,9 @@
 const
     { GraphQLScalarType } = require('graphql'),
+<<<<<<< HEAD
     gql = require('graphql-tag'),
+=======
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
     { Kind } = require('graphql/language'),
     { makeExecutableSchema } = require('graphql-tools'),
     _merge = require('lodash/merge'),
@@ -51,6 +54,7 @@ let graphqlSchema = makeExecutableSchema({
                 description: 'Date custom scalar type',
                 serialize: value => value.toISOString(),
                 parseValue: value => new Date(value),
+<<<<<<< HEAD
                 parseLiteral: ast => {
                     if (ast.kind === Kind.STRING) {
                         const date = new Date(ast.value);
@@ -96,6 +100,43 @@ let graphqlSchema = makeExecutableSchema({
                     console.log('!!!TEST_MUTATION!!!');
                     return 'TEST_MUTATION';
                 }
+=======
+                parseLiteral: ast => ast.kind === Kind.STRING ? new Date(ast.value) : null
+            }),
+
+            Query: {
+                _(root, args, ctx) {
+                    console.log('!!!TEST_QUERY!!!');
+                    return 'TEST_QUERY';
+                },
+
+                now(root, args, ctx) {
+                    return new Date;
+                },
+
+                throwError(root, args, ctx) {
+					throw new Error('LOL regular error...');
+                    return 'Hi!';
+                },
+
+                throwApiError(root, args, ctx) {
+                    throw new ApiError({
+                        errorCode: 'ERR_LOL_API',
+                        message: 'Laughing Out Loudly Error!',
+                        data: null,
+                        internalData: null
+                    });
+                    // throw new Error('LOL!');
+                    return 'Hi!';
+                }
+            },
+
+            Mutation: {
+                _(root, args, ctx) {
+                    console.log('!!!TEST_MUTATION!!!');
+                    return 'TEST_MUTATION';
+                }
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
             },
 
             Subscription: {

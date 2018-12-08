@@ -1,13 +1,13 @@
 const
-    gql = require('graphql-tag'),
     escapeStringRegexp = require('escape-string-regexp'),
     crypto = require('crypto'),
+    bcrypt = require('bcrypt'),
     { filter } = require('rxjs/operators'),
     { createResolver } = require('apollo-resolvers'),
     CommentModel = require('../models/comment-model'),
     UserModel = require('../models/user-model'),
     pubsub = require('./pubsub'),
-    { ApiError } = require('./errors'),
+    { ApiError } = require('./api-errors'),
     config = require('../config'),
     { DataLoader, ImprovedDataLoader } = require('../tools/data-loader'),
     { toAsyncIterBuffered: toAsyncIter } = require('../tools/observable-to-async-iterator'),
@@ -54,7 +54,7 @@ const
 
 
 module.exports = {
-    typeDef: gql`
+    typeDef: `
         type Comment {
             _id: ID
             posterId: ID

@@ -26,7 +26,10 @@ const
 	koaGraphql = require('koa-graphql'),
 	{ ApolloServer } = require('apollo-server-koa'),
 	{ default: koaPlayground } = require('graphql-playground-middleware-koa'),
+<<<<<<< HEAD
 	{ koa: koaVoyager } = require('graphql-voyager/middleware'),
+=======
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
 	// c2k = require('koa-connect'),
 	mongoose = require('mongoose'),
 	Redis = require('ioredis'),
@@ -44,7 +47,11 @@ const
 	authApiMiddleware = require('./api/auth-api-router'),
 	{ ApiError, UnknownError: UnknownApiError } = require('./api/api-errors'),
 	RedisObservable = require('./tools/redis-observable'),
+<<<<<<< HEAD
 	// sequelize = require('./tools/sequelize-connection'),
+=======
+	sequelize = require('./tools/sequelize-connection'),
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
 	SessionManager = require('./tools/session-manager/index'),
 	_each = require('lodash/each'),
 	_partition = require('lodash/partition'),
@@ -99,8 +106,12 @@ const
 			}
 		});
 		
+<<<<<<< HEAD
 		// const sessionManager = new SessionManager(sequelize);
 		const sessionManager = null;
+=======
+		const sessionManager = new SessionManager(sequelize);
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
 		
 		// Establish DB connection + read TLS assets to memory needed for the HTTP2 server
 		const [
@@ -120,12 +131,20 @@ const
 			fsp.readFile(process.env.KMTR_TLS_CERT_PATH),
 
 			...new Array(2).fill().map(async () => {
+<<<<<<< HEAD
 				return null;
 				// return await new Promise((resolve, reject) => {
 				// 	const client = new Redis(process.env.KMTR_REDIS_URI, config.redisOpts);
 				// 	client.once('connect', () => resolve(client));
 				// 	client.once('error', reject);
 				// });
+=======
+				return await new Promise((resolve, reject) => {
+					const client = new Redis(process.env.KMTR_REDIS_URI, config.redisOpts);
+					client.once('connect', () => resolve(client));
+					client.once('error', reject);
+				});
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
 			}),
 
 			new Promise((resolve, reject) => {
@@ -153,7 +172,11 @@ const
 			// 	.once('event.error', reject);
 			}),
 
+<<<<<<< HEAD
 			// sequelize.sync({ alter: true })
+=======
+			sequelize.sync({ alter: true })
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
 		]);
 
 		// let counter = 1;
@@ -201,11 +224,18 @@ const
 		// 	});
 		// }, 3000);
 
+<<<<<<< HEAD
 		// const pubsub = new RedisPubSub({
 		//     publisher: redisPublisher,
 		//     subscriber: redisSubscriber
 		// });
 		const pubsub = null;
+=======
+		const pubsub = new RedisPubSub({
+		    publisher: redisPublisher,
+		    subscriber: redisSubscriber
+		});
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
 
 		const koaSessionMongoose = new KoaSessionMongoose({
 			connection: dbConnection,
@@ -366,9 +396,12 @@ const
 						// ctx.session.test = 'TEST';
 						ctx.body = 'Test Page';
 					})
+<<<<<<< HEAD
 					.all('/voyager', koaVoyager({
 						endpointUrl: '/graphql-api'
 					}))
+=======
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
 					.get('/playground', koaPlayground({
 						endpoint: '/graphql-api'
 					}))
@@ -396,8 +429,14 @@ const
 										stack: (() => {
 											if (process.NODE_ENV !== 'production') {
 												return error.stack ? error.stack.split('\n') : [];
+<<<<<<< HEAD
 											}
 											return undefined;
+=======
+											} else {
+												return undefined;
+											}
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
 										})()
 									};
 								} else {
@@ -423,8 +462,12 @@ const
 								...gqlCommonContext
 							},
 							formatError: error => error
+<<<<<<< HEAD
 						}))
 					)
+=======
+						})))
+>>>>>>> ec6c5c86550df504601e718cd681258462141639
 					.use('/api', new KoaRouter()
 						.use('/auth', authApiMiddleware)
 						.use('/comments', commentsApiMiddleware)
