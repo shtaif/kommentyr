@@ -28,10 +28,7 @@
         "graphql-subscriptions": "^0.5.8",
         "graphql-tag": "^2.10.0",
         "graphql-tools": "^3.0.5",
-<<<<<<< HEAD
         "graphql-voyager": "^1.0.0-rc.26",
-=======
->>>>>>> ec6c5c86550df504601e718cd681258462141639
         "ioredis": "^3.2.2",
         "kafka-node": "^2.6.1",
         "koa": "^2.5.1",
